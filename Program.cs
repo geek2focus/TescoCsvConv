@@ -71,12 +71,14 @@ namespace TescoCsvConv
             
             using (var reader = new StreamReader(args[0]))
             using (var csvReader = new CsvReader(reader, CultureInfo.GetCultureInfo("en-gb")))
-            using (var writer = new StreamWriter(args[1], new UTF8Encoding(true)))
+            using (var outStream = File.Open(args[1], FileMode.Create))
+            using (var writer = new StreamWriter(outStream, new System.Text.UTF8Encoding(true)))
             using (var csvWriter = new CsvWriter(writer, CultureInfo.GetCultureInfo("en-gb")))
             {
                 csvReader.Context.RegisterClassMap<TescoEntryMap>();
                 var entries = csvReader.GetRecords<TescoEntry>();
                 csvWriter.WriteHeader<YnabTxn>();
+                csvWriter.NextRecord();
 
                 foreach (var entry in entries)
                 {
@@ -95,6 +97,7 @@ namespace TescoCsvConv
                             throw new NotImplementedException();
                     }
                     csvWriter.WriteRecord(t);
+                    csvWriter.NextRecord();
                 }
             }
         }
