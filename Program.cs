@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
+using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -69,14 +69,18 @@ namespace TescoCsvConv
                 return;
             }
             
-            using (var reader = new StreamReader(args[0]))
-            using (var csvReader = new CsvReader(reader, CultureInfo.GetCultureInfo("en-gb")))
+            var csvConfig = new CsvConfiguration(CultureInfo.GetCultureInfo("en-gb"));
+            csvConfig.HasHeaderRecord = true;
+            csvConfig.BadDataFound = context => Console.WriteLine("Bad row: ${0}", context.RawRecord);
+
+            using (var csvReader = new CsvReader(new StreamReader(args[0], Encoding.Unicode), csvConfig))
             using (var outStream = File.Open(args[1], FileMode.Create))
             using (var writer = new StreamWriter(outStream, new System.Text.UTF8Encoding(true)))
-            using (var csvWriter = new CsvWriter(writer, CultureInfo.GetCultureInfo("en-gb")))
+            using (var csvWriter = new CsvWriter(writer, csvConfig))
             {
                 csvReader.Context.RegisterClassMap<TescoEntryMap>();
                 var entries = csvReader.GetRecords<TescoEntry>();
+
                 csvWriter.WriteHeader<YnabTxn>();
                 csvWriter.NextRecord();
 
