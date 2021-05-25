@@ -73,7 +73,7 @@ namespace TescoCsvConv
             csvConfig.HasHeaderRecord = true;
             csvConfig.BadDataFound = context => Console.WriteLine("Bad row: ${0}", context.RawRecord);
 
-            using (var csvReader = new CsvReader(new StreamReader(args[0], Encoding.Unicode), csvConfig))
+            using (var csvReader = new CsvReader(new StreamReader(args[0], Encoding.UTF8), csvConfig))
             using (var outStream = File.Open(args[1], FileMode.Create))
             using (var writer = new StreamWriter(outStream, new System.Text.UTF8Encoding(true)))
             using (var csvWriter = new CsvWriter(writer, csvConfig))
