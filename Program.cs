@@ -93,7 +93,7 @@ namespace TescoCsvConv
                     switch (entry.Type)
                     {
                         case TxnType.Credit:
-                            t.Inflow = entry.Amount;
+                            t.Inflow = entry.Amount.TrimStart('-');
                             break;
                         case TxnType.Debit:
                             t.Outflow = entry.Amount;
